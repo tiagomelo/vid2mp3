@@ -10,11 +10,15 @@ test:
 	@ go test -v ./... -count=1
 
 .PHONY: coverage
-## coverage: run unit tests and generate coverage report in html format
+## coverage: run unit tests and generate coverage report (coverage.out + coverage.html)
 coverage:
-	@ packages=$$(go list ./... | grep -v "cmd" | grep -v "fs"); \
+	@ set -e; \
+	packages=$$(go list ./... | grep -v "/cmd" | grep -v "/fs"); \
 	if [ -z "$$packages" ]; then \
 		echo "No valid Go packages found"; \
 		exit 1; \
 	fi; \
-	go test -race -coverpkg=$$(echo $$packages | tr ' ' ',') -coverprofile=coverage.out $$packages && go tool cover -html=coverage.out
+	echo "Packages:" $$packages; \
+	go test -race -coverpkg=$$(echo $$packages | tr ' ' ',') -coverprofile=coverage.out $$packages; \
+	go tool cover -html=coverage.out -o coverage.html; \
+	echo "Generated: coverage.out coverage.html"
