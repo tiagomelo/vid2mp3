@@ -1,7 +1,6 @@
 # vid2mp3
 
-[![CI](https://github.com/tiagomelo/vid2mp3/actions/workflows/ci.yml/badge.svg)](https://github.com/tiagomelo/vid2mp3/actions/workflows/ci.yml)
-
+[![CI](https://github.com/tiagomelo/vid2mp3/actions/workflows/ci.yml/badge.svg)](https://github.com/tiagomelo/vid2mp3/actions/workflows/ci.yml) [![Go Reference](https://pkg.go.dev/badge/github.com/tiagomelo/vid2mp3.svg)](https://pkg.go.dev/github.com/tiagomelo/vid2mp3)
 
 ![logo](logo.png)
 
