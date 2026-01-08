@@ -1,5 +1,8 @@
 # vid2mp3
 
+[![CI](https://github.com/tiagomelo/vid2mp3/actions/workflows/ci.yml/badge.svg)](https://github.com/tiagomelo/vid2mp3/actions/workflows/ci.yml)
+
+
 ![logo](logo.png)
 
 A simple command-line utility to extract audio from video files and convert it to MP3 format.
