@@ -11,12 +11,12 @@ import (
 	"github.com/tiagomelo/vid2mp3/syscall/fs"
 )
 
-// fsProvider is a variable that holds the file system implementation.
-var fsProvider fs.FileSystem = fs.OSFileSystem{}
+// fsOps is a variable that holds the file system ops implementation.
+var fsOps fs.FileSystemOps = fs.OSFileSystemOps{}
 
 // ExecCommand executes a command with arguments.
 func ExecCommand(ctx context.Context, cmd string, args ...string) (string, error) {
-	output, err := fsProvider.CommandContext(ctx, cmd, args...).CombinedOutput()
+	output, err := fsOps.CommandContext(ctx, cmd, args...).CombinedOutput()
 	if err != nil {
 		return "", errors.WithMessagef(err, "error when executing command [%s] with args %v: output: [%v]", cmd, args, string(output))
 	}
@@ -25,7 +25,7 @@ func ExecCommand(ctx context.Context, cmd string, args ...string) (string, error
 
 // ToolIsNotAvailable checks if a tool is not available in the system's PATH.
 func ToolIsNotAvailable(toolName string) bool {
-	if _, err := fsProvider.LookPath(toolName); err != nil {
+	if _, err := fsOps.LookPath(toolName); err != nil {
 		return true
 	}
 	return false

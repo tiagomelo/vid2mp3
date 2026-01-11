@@ -16,8 +16,8 @@ type ExecCmd interface {
 	CombinedOutput() ([]byte, error)
 }
 
-// FileSystem interface abstracts the file system operations.
-type FileSystem interface {
+// FileSystemOps interface abstracts the file system operations.
+type FileSystemOps interface {
 	// CommandContext creates a new execCmd for the given command.
 	CommandContext(ctx context.Context, name string, arg ...string) ExecCmd
 
@@ -25,15 +25,15 @@ type FileSystem interface {
 	LookPath(file string) (string, error)
 }
 
-// OSFileSystem struct implements the fileSystem interface using
+// OSFileSystemOps struct implements the fileSystem interface using
 // the standard library's os package. This is the real implementation
 // that interacts with the actual file system.
-type OSFileSystem struct{}
+type OSFileSystemOps struct{}
 
-func (OSFileSystem) CommandContext(ctx context.Context, name string, arg ...string) ExecCmd {
+func (OSFileSystemOps) CommandContext(ctx context.Context, name string, arg ...string) ExecCmd {
 	return exec.CommandContext(ctx, name, arg...)
 }
 
-func (OSFileSystem) LookPath(file string) (string, error) {
+func (OSFileSystemOps) LookPath(file string) (string, error) {
 	return exec.LookPath(file)
 }

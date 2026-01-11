@@ -14,16 +14,16 @@ import (
 )
 
 func TestExecCommand(t *testing.T) {
-	originalFSProvider := fsProvider
+	originalFSProvider := fsOps
 	t.Run("executes command successfully", func(t *testing.T) {
 		defer func() {
-			fsProvider = originalFSProvider
+			fsOps = originalFSProvider
 		}()
 		mockCmd := &mockExecCmd{
 			output: []byte("command output"),
 			err:    nil,
 		}
-		fsProvider = &mockOSFileSystem{
+		fsOps = &mockOSFileSystem{
 			execCmd: mockCmd,
 		}
 		output, err := ExecCommand(context.TODO(), "echo", "hello")
@@ -33,13 +33,13 @@ func TestExecCommand(t *testing.T) {
 
 	t.Run("error during command execution", func(t *testing.T) {
 		defer func() {
-			fsProvider = originalFSProvider
+			fsOps = originalFSProvider
 		}()
 		mockCmd := &mockExecCmd{
 			output: nil,
 			err:    exec.ErrNotFound,
 		}
-		fsProvider = &mockOSFileSystem{
+		fsOps = &mockOSFileSystem{
 			execCmd: mockCmd,
 		}
 		output, err := ExecCommand(context.TODO(), "some-nonexistent-command", "arg1")
@@ -49,12 +49,12 @@ func TestExecCommand(t *testing.T) {
 }
 
 func TestToolIsNotAvailable(t *testing.T) {
-	originalFSProvider := fsProvider
+	originalFSProvider := fsOps
 	t.Run("tool is available", func(t *testing.T) {
 		defer func() {
-			fsProvider = originalFSProvider
+			fsOps = originalFSProvider
 		}()
-		fsProvider = &mockOSFileSystem{
+		fsOps = &mockOSFileSystem{
 			errLookPath: nil,
 		}
 		notAvailable := ToolIsNotAvailable("some-tool")
@@ -63,9 +63,9 @@ func TestToolIsNotAvailable(t *testing.T) {
 
 	t.Run("tool is not available", func(t *testing.T) {
 		defer func() {
-			fsProvider = originalFSProvider
+			fsOps = originalFSProvider
 		}()
-		fsProvider = &mockOSFileSystem{
+		fsOps = &mockOSFileSystem{
 			errLookPath: exec.ErrNotFound,
 		}
 		notAvailable := ToolIsNotAvailable("some-tool")
