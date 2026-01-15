@@ -12,14 +12,14 @@ import (
 )
 
 func TestExtractAudioFromVideo(t *testing.T) {
-	originalExecutor := new(defaultOSCommandExecutor)
+	originalExecutor := new(defaultFileSystemExecOpsProvider)
 
 	t.Run("successfully extracts audio from video", func(t *testing.T) {
 		defer func() {
-			osCommandExecutorProvider = originalExecutor
+			fileSystemExecOpsProvider = originalExecutor
 		}()
 
-		osCommandExecutorProvider = new(mockOSCommandExecutor)
+		fileSystemExecOpsProvider = new(mockOSCommandExecutor)
 
 		err := ExtractAudioFromVideo(context.TODO(), "input.mp4", "output.mp3")
 		require.NoError(t, err)
@@ -27,10 +27,10 @@ func TestExtractAudioFromVideo(t *testing.T) {
 
 	t.Run("ffmpeg not available", func(t *testing.T) {
 		defer func() {
-			osCommandExecutorProvider = originalExecutor
+			fileSystemExecOpsProvider = originalExecutor
 		}()
 
-		osCommandExecutorProvider = &mockOSCommandExecutor{
+		fileSystemExecOpsProvider = &mockOSCommandExecutor{
 			toolNotAvailable: true,
 		}
 
@@ -40,7 +40,7 @@ func TestExtractAudioFromVideo(t *testing.T) {
 
 	t.Run("error during command execution", func(t *testing.T) {
 		defer func() {
-			osCommandExecutorProvider = originalExecutor
+			fileSystemExecOpsProvider = originalExecutor
 		}()
 
 		errorExecution := errors.New("some execution error")
@@ -50,7 +50,7 @@ func TestExtractAudioFromVideo(t *testing.T) {
 			outputFile: "output.mp3",
 			err:        errorExecution,
 		}
-		osCommandExecutorProvider = &mockOSCommandExecutor{
+		fileSystemExecOpsProvider = &mockOSCommandExecutor{
 			execCommandErr: errorExecution,
 		}
 

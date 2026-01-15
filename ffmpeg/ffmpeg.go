@@ -30,38 +30,38 @@ const ffmpegToolName = "ffmpeg"
 // ErrorFfmpegNotAvailable is returned when ffmpeg is not available in the system's PATH.
 var ErrorFfmpegNotAvailable = fmt.Errorf("%s is not available", ffmpegToolName)
 
-// osCommandExecutorProvider is a variable that holds the function
+// fileSystemExecOpsProvider is a variable that holds the function
 // that executes a command with arguments.
-var osCommandExecutorProvider osCommandExecutor = &defaultOSCommandExecutor{}
+var fileSystemExecOpsProvider fileSystemExecOps = &defaultFileSystemExecOpsProvider{}
 
-// osCommandExecutor defines an interface for executing OS commands.
-type osCommandExecutor interface {
+// fileSystemExecOps defines an interface for executing OS commands.
+type fileSystemExecOps interface {
 	ExecCommand(ctx context.Context, name string, arg ...string) (string, error)
 
 	ToolIsNotAvailable(toolName string) bool
 }
 
-// defaultOSCommandExecutor is the default implementation of osCommandExecutor.
-type defaultOSCommandExecutor struct{}
+// defaultFileSystemExecOpsProvider is the default implementation of fileSystemExecOps.
+type defaultFileSystemExecOpsProvider struct{}
 
 // ExecCommand executes a command with arguments.
-func (d *defaultOSCommandExecutor) ExecCommand(ctx context.Context, name string, arg ...string) (string, error) {
+func (d *defaultFileSystemExecOpsProvider) ExecCommand(ctx context.Context, name string, arg ...string) (string, error) {
 	return syscall.ExecCommand(ctx, name, arg...)
 }
 
 // ToolIsNotAvailable checks if a tool is not available in the system's PATH.
-func (d *defaultOSCommandExecutor) ToolIsNotAvailable(toolName string) bool {
+func (d *defaultFileSystemExecOpsProvider) ToolIsNotAvailable(toolName string) bool {
 	return syscall.ToolIsNotAvailable(toolName)
 }
 
 // ExtractAudioFromVideo extracts audio from a video file using ffmpeg.
 // ffmpeg must be installed and available in the system's PATH.
 func ExtractAudioFromVideo(ctx context.Context, inputVideoPath, outputAudioPath string) error {
-	if osCommandExecutorProvider.ToolIsNotAvailable(ffmpegToolName) {
+	if fileSystemExecOpsProvider.ToolIsNotAvailable(ffmpegToolName) {
 		return ErrorFfmpegNotAvailable
 	}
 
-	if _, err := osCommandExecutorProvider.ExecCommand(
+	if _, err := fileSystemExecOpsProvider.ExecCommand(
 		ctx,
 		ffmpegToolName,
 		"-i",
